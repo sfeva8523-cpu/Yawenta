@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Yawenta Foundation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { min-height: 100vh; display: flex; justify-content: center; align-items: center; color: white; overflow-y: auto; overflow-x: hidden; position: relative; padding: 20px 0; }
+        .bg-image { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: url('assets/forest-bg.gif') center/cover no-repeat;  /* ✅ CORRECT! */
+    z-index: -2; 
+}
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.75) 100%); z-index: -1; }
+        .light-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .light-particle { position: absolute; width: 4px; height: 4px; background: rgba(255, 200, 100, 0.8); border-radius: 50%; box-shadow: 0 0 10px rgba(255, 200, 100, 0.8), 0 0 20px rgba(255, 200, 100, 0.4); animation: floatLight 15s infinite; }
+        @keyframes floatLight { 0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
+        .loading-container { text-align: center; max-width: 750px; width: 90%; padding: 3rem 2.5rem; position: relative; z-index: 10; animation: fadeInUp 1s ease-out; margin: auto; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        .logo-section { margin-bottom: 2.5rem; }
+        .logo-container { width: 180px; height: 180px; margin: 0 auto 1.5rem; position: relative; animation: logoFloat 3s ease-in-out infinite; }
+        .logo-img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; box-shadow: 0 0 40px rgba(255, 152, 0, 0.6), 0 0 80px rgba(255, 152, 0, 0.3); border: 4px solid rgba(255, 255, 255, 0.2); }
+        @keyframes logoFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.02); } }
+        h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 0.5rem; text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 30px rgba(255, 200, 100, 0.5); letter-spacing: -0.5px; background: linear-gradient(135deg, #fff, #ffc107); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { font-size: 1.15rem; opacity: 0.95; font-weight: 300; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .glass-card { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px; padding: 2.5rem; margin: 2rem 0; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(255, 255, 255, 0.05); transition: all 0.4s ease; }
+        .glass-card:hover { border-color: rgba(255, 200, 100, 0.5); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 50px rgba(255, 200, 100, 0.25), inset 0 0 30px rgba(255, 255, 255, 0.1); }
+        .progress-container { margin: 2rem 0; }
+        .progress-bar { height: 12px; background: rgba(255, 255, 255, 0.15); border-radius: 10px; overflow: hidden; position: relative; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #ff9800, #ffc107, #ffeb3b, #ffc107, #ff9800); background-size: 200% 100%; animation: shimmer 2s infinite; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 20px rgba(255, 152, 0, 0.8), 0 0 40px rgba(255, 152, 0, 0.4); position: relative; }
+        .progress-fill::after { content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 100%; background: white; box-shadow: 0 0 10px white, 0 0 20px white; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .progress-text { text-align: center; margin-top: 1rem; font-size: 0.95rem; opacity: 0.9; font-weight: 500; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .steps-container { display: flex; flex-direction: column; gap: 1rem; margin: 2rem 0; }
+        .step-card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; padding: 1.3rem; display: flex; align-items: center; gap: 1.2rem; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.6; transform: translateX(-10px); cursor: default; }
+        .step-card:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 200, 100, 0.5); box-shadow: 0 4px 20px rgba(255, 200, 100, 0.3), inset 0 0 20px rgba(255, 200, 100, 0.05); transform: translateX(-5px); }
+        .step-card.active { opacity: 1; background: rgba(255, 152, 0, 0.15); border-color: rgba(255, 152, 0, 0.6); transform: translateX(0); box-shadow: 0 4px 25px rgba(255, 152, 0, 0.4), 0 0 30px rgba(255, 152, 0, 0.2), inset 0 0 20px rgba(255, 152, 0, 0.1); }
+        .step-card.completed { opacity: 1; background: rgba(76, 175, 80, 0.15); border-color: rgba(76, 175, 80, 0.6); transform: translateX(0); box-shadow: 0 4px 25px rgba(76, 175, 80, 0.4), 0 0 30px rgba(76, 175, 80, 0.2); }
+        .step-icon { width: 55px; height: 55px; border-radius: 14px; background: rgba(255, 255, 255, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; transition: all 0.4s ease; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .step-card.active .step-icon { background: linear-gradient(135deg, #ff9800, #ffc107); border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 25px rgba(255, 152, 0, 0.6), 0 0 50px rgba(255, 152, 0, 0.3); animation: iconPulse 1.5s ease-in-out infinite; }
+        .step-card.completed .step-icon { background: linear-gradient(135deg, #4caf50, #66bb6a); border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 25px rgba(76, 175, 80, 0.6), 0 0 50px rgba(76, 175, 80, 0.3); }
+        @keyframes iconPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        .step-content { text-align: left; flex: 1; }
+        .step-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.3rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+        .step-description { font-size: 0.9rem; opacity: 0.85; font-weight: 400; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1.5rem 0; }
+        .stat-box { background: rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 1.3rem; text-align: center; border: 1px solid rgba(255, 255, 255, 0.15); transition: all 0.4s ease; cursor: default; }
+        .stat-box:hover { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 200, 100, 0.6); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(255, 200, 100, 0.3), 0 0 25px rgba(255, 200, 100, 0.2); }
+        .stat-value { font-size: 1.9rem; font-weight: 700; margin-bottom: 0.4rem; background: linear-gradient(135deg, #fff, #ffc107, #ffeb3b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: 0 0 30px rgba(255, 200, 100, 0.5); }
+        .stat-label { font-size: 0.85rem; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.8px; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        .speed-badge { display: inline-block; padding: 0.7rem 1.8rem; border-radius: 25px; font-weight: 600; font-size: 1rem; margin: 1.5rem 0 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.4s ease; }
+        .badge-slow { background: linear-gradient(135deg, rgba(244, 67, 54, 0.9), rgba(239, 83, 80, 0.9)); border-color: rgba(244, 67, 54, 0.6); box-shadow: 0 4px 25px rgba(244, 67, 54, 0.5), 0 0 30px rgba(244, 67, 54, 0.3); animation: badgePulse 2s infinite; }        .badge-average { background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(255, 183, 77, 0.9)); border-color: rgba(255, 152, 0, 0.6); box-shadow: 0 4px 25px rgba(255, 152, 0, 0.5), 0 0 30px rgba(255, 152, 0, 0.3); }
+        .badge-mid { background: linear-gradient(135deg, rgba(255, 235, 59, 0.9), rgba(255, 241, 118, 0.9)); color: #333; border-color: rgba(255, 235, 59, 0.6); box-shadow: 0 4px 25px rgba(255, 235, 59, 0.5), 0 0 30px rgba(255, 235, 59, 0.3); }
+        .badge-fast { background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(102, 187, 106, 0.9)); border-color: rgba(76, 175, 80, 0.6); box-shadow: 0 4px 25px rgba(76, 175, 80, 0.5), 0 0 30px rgba(76, 175, 80, 0.3); }
+        @keyframes badgePulse { 0%, 100% { box-shadow: 0 4px 25px rgba(244, 67, 54, 0.5), 0 0 30px rgba(244, 67, 54, 0.3); } 50% { box-shadow: 0 4px 35px rgba(244, 67, 54, 0.7), 0 0 50px rgba(244, 67, 54, 0.5); } }
+        .confirmation-box { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); color: white; border-radius: 24px; padding: 3rem 2.5rem; margin: 2rem 0; text-align: center; border: 2px solid rgba(255, 200, 100, 0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 50px rgba(255, 200, 100, 0.2), inset 0 0 30px rgba(255, 200, 100, 0.05); display: none; animation: slideUp 0.6s ease; }
+        .confirmation-box.show { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .choice-icon { width: 90px; height: 90px; background: linear-gradient(135deg, #ff9800, #ffc107); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 0 30px rgba(255, 152, 0, 0.6), 0 0 60px rgba(255, 152, 0, 0.3); border: 3px solid rgba(255, 255, 255, 0.3); }
+        .choice-icon i { font-size: 2.8rem; color: white; filter: drop-shadow(0 2px 10px rgba(0,0,0,0.3)); }
+        .confirmation-box h2 { background: linear-gradient(135deg, #fff, #ffc107); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: 2rem; margin-bottom: 1rem; font-weight: 700; text-shadow: 0 0 30px rgba(255, 200, 100, 0.5); }
+        .confirmation-box p { opacity: 0.95; line-height: 1.7; font-size: 1.05rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8); margin-bottom: 2rem; }
+        .data-usage-card { background: linear-gradient(135deg, rgba(255, 152, 0, 0.15), rgba(255, 193, 7, 0.1)); border-left: 4px solid #ff9800; padding: 1.5rem; margin: 1rem 0; border-radius: 14px; text-align: left; border: 1px solid rgba(255, 152, 0, 0.3); transition: all 0.4s ease; cursor: pointer; }
+        .data-usage-card:hover { border-color: rgba(255, 152, 0, 0.6); box-shadow: 0 4px 25px rgba(255, 152, 0, 0.3), inset 0 0 20px rgba(255, 152, 0, 0.05); transform: translateX(5px); }
+        .data-usage-card.selected { background: linear-gradient(135deg, rgba(255, 152, 0, 0.3), rgba(255, 193, 7, 0.2)); border-color: #ffc107; box-shadow: 0 0 30px rgba(255, 193, 7, 0.4); }
+        .data-usage-card.lite-mode { background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(102, 187, 106, 0.1)); border-left-color: #4caf50; border-color: rgba(76, 175, 80, 0.3); }
+        .data-usage-card.lite-mode.selected { background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(102, 187, 106, 0.2)); border-color: #81c784; box-shadow: 0 0 30px rgba(129, 199, 132, 0.4); }
+        .data-usage-card strong { color: #ffc107; display: block; margin-bottom: 0.6rem; font-size: 1.15rem; text-shadow: 0 0 20px rgba(255, 193, 7, 0.5); }
+        .data-usage-card.lite-mode strong { color: #81c784; text-shadow: 0 0 20px rgba(129, 199, 132, 0.5); }
+        .data-usage-card p { font-size: 0.95rem; margin: 0; opacity: 0.95; }
+        .btn-group { display: flex; gap: 1.2rem; margin-top: 2.5rem; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 1.2rem 3rem; border: 2px solid transparent; border-radius: 50px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); display: inline-flex; align-items: center; gap: 0.7rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+        .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: left 0.5s ease; }
+        .btn:hover::before { left: 100%; }
+        .btn:hover { transform: translateY(-5px); box-shadow: 0 10px 35px rgba(0,0,0,0.4), 0 0 30px rgba(255, 200, 100, 0.4); }
+        .btn:active { transform: translateY(-2px); }
+        .btn-primary { background: linear-gradient(135deg, #1565c0, #1976d2, #2196f3); color: white; border-color: rgba(255, 255, 255, 0.3); }
+        .btn-primary:hover { background: linear-gradient(135deg, #0d47a1, #1565c0, #1976d2); border-color: rgba(255, 200, 100, 0.6); box-shadow: 0 10px 35px rgba(0,0,0,0.4), 0 0 40px rgba(255, 200, 100, 0.5); }
+        .btn-secondary { background: linear-gradient(135deg, rgba(117, 117, 117, 0.8), rgba(158, 158, 158, 0.8)); color: white; border-color: rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px); }
+        .btn-secondary:hover { background: linear-gradient(135deg, rgba(97, 97, 97, 0.9), rgba(117, 117, 117, 0.9)); border-color: rgba(255, 200, 100, 0.6); }
+        .hidden { display: none; }
+        .welcome-message { display: none; margin-top: 2rem; padding: 2rem; background: rgba(76, 175, 80, 0.2); border-radius: 20px; border: 2px solid rgba(76, 175, 80, 0.6); animation: fadeIn 0.5s ease; }
+        .welcome-message.show { display: block; }
+        .welcome-message h3 { color: #81c784; font-size: 1.8rem; margin-bottom: 1rem; }
+        .welcome-message p { opacity: 0.9; font-size: 1.1rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @media (max-width: 600px) { h1 { font-size: 2.2rem; } .logo-container { width: 140px; height: 140px; } .stats-grid { grid-template-columns: 1fr; } .btn-group { flex-direction: column; } .btn { width: 100%; justify-content: center; } .glass-card { padding: 1.8rem; } .step-card { padding: 1.1rem; } .loading-container { padding: 2rem 1.5rem; } }
+        @media (max-height: 700px) { body { align-items: flex-start; padding-top: 40px; } .loading-container { padding: 1.5rem; margin: 0 auto; } .glass-card, .confirmation-box { padding: 1.5rem; margin: 1rem 0; } .logo-container { width: 120px; height: 120px; margin-bottom: 1rem; } h1 { font-size: 2rem; } }
+        .debug-link { position: fixed; bottom: 20px; right: 20px; background: rgba(244, 67, 54, 0.9); color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-size: 0.85rem; z-index: 1000; box-shadow: 0 4px 15px rgba(244, 67, 54, 0.5); transition: all 0.3s ease; }
+        .debug-link:hover { background: rgba(244, 67, 54, 1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(244, 67, 54, 0.7); }
+    </style>
+</head>
+<body>
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+    <div class="light-particles" id="lightParticles"></div>
+    <a href="debug.html" class="debug-link" target="_blank">🐛 View Debug Logs</a>
+
+    <div class="loading-container">
+        <div class="logo-section">
+            <div class="logo-container">                <img src="yawenta-logo.png" alt="Yawenta Foundation Logo" class="logo-img" id="logoImg">
+            </div>
+            <h1>Yawenta Foundation</h1>
+            <p class="subtitle">Optimizing your experience for the best performance</p>
+        </div>
+
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="progressText">Initializing...</div>
+        </div>
+
+        <div class="glass-card" id="glassCard">
+            <div class="steps-container">
+                <div class="step-card" id="step1">
+                    <div class="step-icon"><i class="fas fa-wifi"></i></div>
+                    <div class="step-content">
+                        <div class="step-title">Analyzing Network</div>
+                        <div class="step-description" id="desc1">Detecting connection type and speed...</div>
+                    </div>
+                </div>
+                <div class="step-card" id="step2">
+                    <div class="step-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    <div class="step-content">
+                        <div class="step-title">Testing Performance</div>
+                        <div class="step-description" id="desc2">Measuring download bandwidth...</div>
+                    </div>
+                </div>
+                <div class="step-card" id="step3">
+                    <div class="step-icon"><i class="fas fa-mobile-screen"></i></div>
+                    <div class="step-content">
+                        <div class="step-title">Optimizing Content</div>
+                        <div class="step-description" id="desc3">Configuring for your device...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-grid hidden" id="statsGrid">
+                <div class="stat-box"><div class="stat-value" id="statSpeed">--</div><div class="stat-label">Download Speed</div></div>
+                <div class="stat-box"><div class="stat-value" id="statType">--</div><div class="stat-label">Connection</div></div>
+                <div class="stat-box"><div class="stat-value" id="statData">--</div><div class="stat-label">Data Saver</div></div>
+                <div class="stat-box"><div class="stat-value" id="statDevice">--</div><div class="stat-label">Device</div></div>
+            </div>
+            <div class="speed-badge hidden" id="speedBadge">Testing connection...</div>
+        </div>
+
+        <div class="confirmation-box" id="confirmation">
+            <div class="choice-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <h2>Choose Your Experience</h2>
+            <p>Based on your connection, we recommend selecting the best option for you:</p>            <div class="data-usage-card" id="videoOption" onclick="selectOption('video')">
+                <strong><i class="fas fa-video"></i> Full Video Experience</strong>
+                <p>• Beautiful animated video background<br>• Uses approximately <strong>15-25 MB</strong> of data<br>• Rich visual experience with all features</p>
+            </div>
+            <div class="data-usage-card lite-mode" id="liteOption" onclick="selectOption('lite')">
+                <strong style="color: #81c784;"><i class="fas fa-bolt"></i> Lite Mode (Recommended)</strong>
+                <p>• Fast-loading gradient background<br>• Uses <strong>0 MB</strong> additional data<br>• Optimized for speed and data saving</p>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="confirmSelection()" id="confirmBtn" disabled><i class="fas fa-check-circle"></i> Continue to Website</button>
+            </div>
+        </div>
+
+        <div class="welcome-message" id="welcomeMessage">
+            <h3><i class="fas fa-check-circle"></i> All Set!</h3>
+            <p>Preparing your personalized experience... Redirecting shortly.</p>
+        </div>
+    </div>
+
+    <script>
+        // === DEBUG LOGGER - MUST BE FIRST ===
+        function logDebug(page, message, data = null, type = 'info') {
+            try {
+                const logs = JSON.parse(localStorage.getItem('yawenta_debug_logs') || '[]');
+                logs.push({
+                    timestamp: Date.now(),
+                    page: page,
+                    message: message,
+                    data: data || null,
+                    type: type
+                });
+                if (logs.length > 100) logs.shift();
+                localStorage.setItem('yawenta_debug_logs', JSON.stringify(logs));
+                console.log(`[DEBUG ${page}] ${message}`, data || '');
+            } catch (e) {
+                console.error('Debug error:', e);
+            }
+        }
+
+        function createParticles() {
+            const container = document.getElementById('lightParticles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'light-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (12 + Math.random() * 8) + 's';
+                container.appendChild(particle);
+            }
+        }        createParticles();
+
+        let networkData = { speed: 0, type: 'unknown', dataSaver: false, quality: 'unknown', device: 'Desktop' };
+        let selectedMode = null;
+
+        window.addEventListener('load', () => {
+            logDebug('loading.html', 'Page loaded', { 
+                savedPreference: localStorage.getItem('yawenta_experience_mode'),
+                savedConsent: localStorage.getItem('yawenta_consent_given'),
+                timestamp: Date.now()
+            });
+            
+            const savedPreference = localStorage.getItem('yawenta_experience_mode');
+            const savedConsent = localStorage.getItem('yawenta_consent_given');
+            
+            if (savedPreference && savedConsent === 'true') {
+                logDebug('loading.html', 'Preference exists, skipping to index', { mode: savedPreference }, 'success');
+                updateProgress(100, 'Loading your preferences...');
+                localStorage.setItem('yawenta_last_redirect', Date.now().toString());
+                setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+            } else {
+                logDebug('loading.html', 'No preference found, running diagnostics', null, 'warning');
+                runDiagnostics();
+            }
+        });
+
+        async function runDiagnostics() {
+            updateStep('step1', 'active');
+            updateProgress(15, 'Detecting network information...');
+            await sleep(1000);
+            
+            const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (connection) {
+                networkData.type = connection.effectiveType || 'unknown';
+                networkData.dataSaver = connection.saveData || false;
+                networkData.downlink = connection.downlink || 0;
+            }
+            
+            logDebug('loading.html', 'Network detected', {
+                type: networkData.type,
+                speed: networkData.downlink,
+                dataSaver: networkData.dataSaver
+            });
+            
+            updateStep('step1', 'completed');
+            document.getElementById('desc1').textContent = 'Network detected successfully';
+            updateProgress(35, 'Network analysis complete');
+            await sleep(600);
+
+            updateStep('step2', 'active');            updateProgress(50, 'Running speed test...');
+            
+            // SPEED TEST WITH TIMEOUT (won't hang)
+            const speedTestPromise = new Promise((resolve) => {
+                const startTime = performance.now();
+                const testImage = new Image();
+                
+                // Set timeout - if image doesn't load in 3 seconds, use default speed
+                const timeout = setTimeout(() => {
+                    console.log('Speed test timeout - using default');
+                    networkData.speed = networkData.downlink || 5; // Default to 5 Mbps
+                    resolve();
+                }, 3000);
+                
+                testImage.onload = () => {
+                    clearTimeout(timeout);
+                    const endTime = performance.now();
+                    const duration = (endTime - startTime) / 1000;
+                    networkData.speed = networkData.downlink || Math.max(0.5, (1 / duration).toFixed(2));
+                    resolve();
+                };
+                
+                testImage.onerror = () => {
+                    clearTimeout(timeout);
+                    console.log('Speed test error - using default');
+                    networkData.speed = networkData.downlink || 5;
+                    resolve();
+                };
+                
+                // Use a reliable tiny image
+                testImage.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+            });
+            
+            await speedTestPromise;
+            await sleep(400);
+            
+            logDebug('loading.html', 'Speed test complete', { speed: networkData.speed + ' Mbps' }, 'success');
+            
+            updateStep('step2', 'completed');
+            document.getElementById('desc2').textContent = `Speed: ${networkData.speed} Mbps`;
+            updateProgress(70, 'Speed test complete');
+            await sleep(600);
+
+            updateStep('step3', 'active');
+            updateProgress(85, 'Optimizing for your device...');
+            await sleep(800);
+            
+            networkData.device = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop';
+            
+            logDebug('loading.html', 'Device detected', { device: networkData.device });            
+            updateStep('step3', 'completed');
+            document.getElementById('desc3').textContent = `Optimized for ${networkData.device}`;
+            updateProgress(100, 'Analysis complete');
+            
+            setTimeout(() => {
+                showNetworkStats();
+                setTimeout(showChoiceDialog, 1500);
+            }, 500);
+        }
+
+        function updateStep(stepId, status) {
+            const step = document.getElementById(stepId);
+            step.classList.remove('active', 'completed');
+            step.classList.add(status);
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function showNetworkStats() {
+            document.getElementById('statsGrid').classList.remove('hidden');
+            
+            let quality = 'fast', badgeClass = 'badge-fast', badgeText = '🚀 Excellent Connection';
+            
+            if (networkData.speed < 1 || networkData.type === '2g') {
+                quality = 'slow'; badgeClass = 'badge-slow'; badgeText = '🐌 Slow Connection';
+            } else if (networkData.speed < 3 || networkData.type === '3g') {
+                quality = 'average'; badgeClass = 'badge-average'; badgeText = '⚠️ Moderate Connection';
+            } else if (networkData.speed < 10) {
+                quality = 'mid'; badgeClass = 'badge-mid'; badgeText = '👍 Good Connection';
+            }
+            
+            networkData.quality = quality;
+            
+            document.getElementById('statSpeed').textContent = networkData.speed + ' Mbps';
+            document.getElementById('statType').textContent = networkData.type.toUpperCase();
+            document.getElementById('statData').textContent = networkData.dataSaver ? 'ON' : 'OFF';
+            document.getElementById('statDevice').textContent = networkData.device;
+            
+            const badge = document.getElementById('speedBadge');
+            badge.textContent = badgeText;
+            badge.className = 'speed-badge ' + badgeClass;
+            badge.classList.remove('hidden');
+            
+            logDebug('loading.html', 'Network quality assessed', { quality: quality, badge: badgeText });
+        }
+        function showChoiceDialog() {
+            document.getElementById('confirmation').classList.add('show');
+            document.getElementById('glassCard').style.opacity = '0.3';
+            document.getElementById('glassCard').style.pointerEvents = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            
+            logDebug('loading.html', 'Showing choice dialog', { recommendedMode: networkData.quality === 'slow' ? 'lite' : 'video' });
+            
+            if (networkData.quality === 'slow' || networkData.quality === 'average' || networkData.dataSaver) {
+                selectOption('lite');
+            } else {
+                selectOption('video');
+            }
+        }
+
+        function selectOption(mode) {
+            selectedMode = mode;
+            document.getElementById('videoOption').classList.remove('selected');
+            document.getElementById('liteOption').classList.remove('selected');
+            
+            if (mode === 'video') {
+                document.getElementById('videoOption').classList.add('selected');
+            } else {
+                document.getElementById('liteOption').classList.add('selected');
+            }
+            
+            document.getElementById('confirmBtn').disabled = false;
+            logDebug('loading.html', 'User selected mode', { mode: mode });
+        }
+
+        function confirmSelection() {
+            if (!selectedMode) return;
+            
+            logDebug('loading.html', 'User confirmed selection', { selectedMode: selectedMode, timestamp: Date.now() }, 'success');
+            
+            localStorage.setItem('yawenta_experience_mode', selectedMode);
+            localStorage.setItem('yawenta_consent_given', 'true');
+            localStorage.setItem('yawenta_network_quality', networkData.quality);
+            localStorage.setItem('yawenta_pref_timestamp', Date.now().toString());
+            
+            logDebug('loading.html', 'Preferences saved to localStorage', {
+                mode: localStorage.getItem('yawenta_experience_mode'),
+                consent: localStorage.getItem('yawenta_consent_given')
+            }, 'success');
+            
+            document.getElementById('confirmation').style.display = 'none';
+            document.getElementById('glassCard').style.display = 'none';
+            document.getElementById('speedBadge').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'block';
+                        if (selectedMode === 'video') {
+                loadVideoAssets();
+            } else {
+                loadLiteAssets();
+            }
+        }
+
+        async function loadVideoAssets() {
+            updateProgress(0, 'Downloading video assets...');
+            logDebug('loading.html', 'Loading video assets', null, 'info');
+            
+            const assets = [
+                { name: 'Video background', size: 15 },
+                { name: 'High-res images', size: 3 },
+                { name: 'Animations', size: 2 }
+            ];
+            
+            let totalLoaded = 0;
+            const totalSize = assets.reduce((sum, asset) => sum + asset.size, 0);
+            
+            for (let asset of assets) {
+                await sleep(800);
+                totalLoaded += asset.size;
+                const percent = Math.round((totalLoaded / totalSize) * 100);
+                updateProgress(percent, `Loaded: ${asset.name} (${asset.size} MB)`);
+            }
+            
+            const video = document.createElement('video');
+            video.src = 'assets/yawenta-intro.mp4';
+            video.preload = 'auto';
+            
+            video.onloadeddata = () => { logDebug('loading.html', 'Video preloaded successfully', null, 'success'); };
+            video.onerror = () => { logDebug('loading.html', 'Video preload failed', { src: video.src }, 'error'); };
+            
+            await sleep(500);
+            showWelcomeAndRedirect();
+        }
+
+        async function loadLiteAssets() {
+            updateProgress(0, 'Preparing lite experience...');
+            logDebug('loading.html', 'Loading lite assets', null, 'info');
+            await sleep(1000);
+            updateProgress(50, 'Optimizing for speed...');
+            await sleep(800);
+            updateProgress(100, 'Ready!');
+            await sleep(500);
+            showWelcomeAndRedirect();
+        }
+
+        function showWelcomeAndRedirect() {            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('welcomeMessage').classList.add('show');
+            
+            localStorage.setItem('yawenta_experience_mode', selectedMode);
+            localStorage.setItem('yawenta_last_redirect', Date.now().toString());
+            
+            logDebug('loading.html', 'Redirecting to index.html', {
+                mode: selectedMode,
+                savedMode: localStorage.getItem('yawenta_experience_mode'),
+                timestamp: Date.now()
+            }, 'success');
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2500);
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
