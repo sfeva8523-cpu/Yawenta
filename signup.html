@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Yawenta Foundation</title>
+    <style>
+        :root {
+            --primary-blue: #1565c0;
+            --light-blue: #e3f2fd;
+            --accent-color: #ff9800;
+            --green-highlight: #4caf50;
+            --text-dark: #333333;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+            --error: #d32f2f;
+            --success: #4caf50;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, var(--light-blue) 0%, #bbdefb 100%); 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        .page-header {
+            background: white;
+            padding: 1rem 5%;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .page-header .logo {
+            color: var(--primary-blue);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .page-header .logo::before {
+            content: "🌟";
+            font-size: 2rem;
+        }
+
+        /* --- Ethiopian Timer --- */
+        .timer-container {
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-highlight));
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+            margin: 1.5rem auto;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            animation: slideDown 0.5s ease;
+        }
+        .timer-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-bottom: 0.3rem;
+        }
+        .timer-display {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        /* --- Signup Container --- */
+        .signup-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .signup-container {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 600px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .signup-header h1 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .signup-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* --- Progress Steps --- */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .progress-steps::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .step.active .step-number {
+            background: var(--primary-blue);
+            color: white;
+            transform: scale(1.1);
+        }
+        .step.completed .step-number {
+            background: var(--success);
+            color: white;
+        }
+        .step-label {
+            font-size: 0.8rem;
+            color: #999;
+            font-weight: 600;
+        }
+        .step.active .step-label {
+            color: var(--primary-blue);
+        }
+
+        .form-section { display: none; }
+        .form-section.active { 
+            display: block; 
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* --- Role Cards --- */
+        .role-cards { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 1rem; 
+            margin-bottom: 1.5rem; 
+        }
+        .role-card {
+            border: 3px solid #e0e0e0;
+            padding: 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .role-card:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        .role-card.selected { 
+            border-color: var(--primary-blue); 
+            background: var(--light-blue);
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.2);
+        }
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+        }
+        .role-card strong {
+            display: block;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .role-card span {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* --- Form Elements --- */
+        .input-group { 
+            margin-bottom: 1.2rem; 
+            text-align: left; 
+        }
+        .input-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            color: var(--text-dark); 
+            font-size: 0.9rem; 
+            font-weight: 600;
+        }
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus, 
+        .input-group select:focus, 
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+        }
+        .help-text { 
+            font-size: 0.8rem; 
+            color: #666; 
+            margin-top: 0.4rem;
+            font-style: italic;
+        }
+        .required {
+            color: var(--error);
+        }
+        
+        /* --- Buttons --- */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary-blue), #1976d2); 
+            color: white;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(21, 101, 192, 0.4);
+        }
+        .btn-secondary { 
+            background: #f5f5f5; 
+            color: var(--text-dark);
+            border: 2px solid #ddd;
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* --- Terms Box --- */
+        .terms-box {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .terms-box h3 {
+            color: var(--primary-blue);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+        .terms-box p {
+            margin: 0.8rem 0;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+
+        /* --- Animations --- */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (min-width: 600px) {
+            .role-cards { grid-template-columns: 1fr 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .timer-display {
+                font-size: 1.7rem;
+            }
+            .signup-container {
+                padding: 2rem 1.5rem;
+            }
+            .signup-header h1 {
+                font-size: 1.7rem;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .progress-steps {
+                font-size: 0.75rem;
+            }
+            .step-number {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <a href="index.html" class="logo">Yawenta Foundation</a>
+    </header>
+
+    <!-- Ethiopian Timer -->
+    <div class="timer-container">
+        <div class="timer-label">🇪🇹 Ethiopian Local Time</div>
+        <div class="timer-display" id="ethiopianClock">00:00:00</div>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="signup-wrapper">
+        <div class="signup-container">
+            <div class="signup-header">
+                <h1>Create Your Account</h1>
+                <p>Join the Yawenta community today</p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="step active" id="stepIndicator1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Role</div>
+                </div>
+                <div class="step" id="stepIndicator2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Details</div>
+                </div>
+                <div class="step" id="stepIndicator3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Verify</div>
+                </div>
+            </div>
+
+            <!-- Step 1: Role Selection -->
+            <div id="step1" class="form-section active">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Select Your Role</h3>
+                <p class="help-text" style="text-align:center; margin-bottom:1.5rem;">Choose the account that best fits you</p>
+                
+                <div class="role-cards">
+                    <div class="role-card" onclick="selectRole('student')">
+                        <div class="role-icon">🎓</div>
+                        <strong>Student</strong>
+                        <span>Learn & Track Progress</span>
+                    </div>
+                    <div class="role-card" onclick="selectRole('teacher')">
+                        <div class="role-icon">👨‍🏫</div>
+                        <strong>Teacher</strong>
+                        <span>Teach & Manage Classes</span>
+                    </div>
+                    <div class="role-card" onclick="selectRole('agent')">
+                        <div class="role-icon">🛡️</div>
+                        <strong>Agent</strong>
+                        <span>Verify & Support</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Student Details -->
+            <div id="stepStudent" class="form-section">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Student Information</h3>
+                
+                <div class="input-group">
+                    <label>Grade Level <span class="required">*</span></label>
+                    <select id="studentGrade" onchange="toggleStudentFields()">
+                        <option value="">Select Grade</option>
+                        <option value="4-8">Grade 4 - 8 (Junior)</option>
+                        <option value="9-12">Grade 9 - 12 (High School)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>School Type <span class="required">*</span></label>
+                    <select id="schoolType" onchange="toggleStudentFields()">
+                        <option value="local">Yawenta Local (Agent Code)</option>
+                        <option value="external">External School (ID Upload)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" placeholder="First Father Grandfather" required>
+                    <div class="help-text">Enter your full legal name</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Username <span class="required">*</span></label>
+                    <input type="text" placeholder="Choose a unique username" required>
+                </div>
+
+                <!-- Dynamic Fields -->
+                <div id="localCodeField" class="input-group">
+                    <label>Unique Agent Code <span class="required">*</span></label>
+                    <input type="text" placeholder="Enter code given by agent">
+                    <div class="help-text">Required for local students. Contact an agent if you don't have one.</div>
+                </div>
+
+                <div id="highSchoolFields" style="display:none;">
+                    <div class="input-group">
+                        <label>Stream (Grade 10-12)</label>
+                        <select>
+                            <option value="natural">Natural Science</option>
+                            <option value="social">Social Science</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address <span class="required">*</span></label>
+                        <input type="email" placeholder="Required for verification">
+                        <div class="help-text">We will send a verification code</div>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number <span class="required">*</span></label>
+                        <input type="tel" placeholder="Required for agent contact">
+                        <div class="help-text">Agents will contact you within 48 hours</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goBack('step1')">← Back</button>
+                    <button class="btn btn-primary" onclick="goToTerms()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Teacher Details -->
+            <div id="stepTeacher" class="form-section">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Teacher Information</h3>
+                
+                <div class="input-group">
+                    <label>Subject Specialization <span class="required">*</span></label>
+                    <input type="text" placeholder="e.g. Mathematics, Physics, English" required>
+                </div>
+                <div class="input-group">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" required>
+                </div>
+                <div class="input-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <input type="email" required>
+                </div>
+                <div class="input-group">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="tel" required>
+                </div>
+                <div class="input-group">
+                    <label>Years of Experience</label>
+                    <input type="number" placeholder="e.g. 5" min="0">
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goBack('step1')">← Back</button>
+                    <button class="btn btn-primary" onclick="goToTerms()">Next →</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Terms & Conditions -->
+            <div id="stepTerms" class="form-section">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-blue);">Terms & Privacy</h3>
+                
+                <div class="terms-box">
+                    <h3>Privacy Policy</h3>
+                    <p><strong>Data Protection:</strong> We respect your privacy. All data collected is encrypted and not shared with 3rd parties.</p>
+                    
+                    <p><strong>Medical Information (OTZ):</strong> Health-related information is kept strictly confidential and managed only by verified agents and doctors.</p>
+                    
+                    <p><strong>Verification:</strong> For Grade 9-12 students, phone and email are required for identity verification. Agents may contact you within 48 hours for manual inspection.</p>
+                    
+                    <p><strong>Account Security:</strong> Providing false information or scam attempts will result in account blacklisting.</p>
+                    
+                    <p><strong>Content Usage:</strong> Study materials and lessons are for personal educational use only.</p>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">I agree to the <a href="#" style="color: var(--primary-blue);">Terms and Conditions</a> and <a href="#" style="color: var(--primary-blue);">Privacy Policy</a> <span class="required">*</span></label>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goBack('stepStudent')">← Back</button>
+                    <button class="btn btn-primary" onclick="submitForm()">Complete Registration ✓</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRole = '';
+
+        // --- Ethiopian Timer ---
+        function updateEthiopianTime() {
+            const now = new Date();
+            const options = { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit',
+                hour12: false,
+                timeZone: 'Africa/Addis_Ababa'
+            };
+            const timeString = now.toLocaleTimeString('en-US', options);
+            document.getElementById('ethiopianClock').innerText = timeString;
+        }
+        setInterval(updateEthiopianTime, 1000);
+        updateEthiopianTime();
+
+        // --- Role Selection ---
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // Update UI
+            document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // Hide all sections
+            document.querySelectorAll('.form-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            
+            // Show appropriate section
+            if (role === 'student') {
+                document.getElementById('stepStudent').classList.add('active');
+                document.getElementById('stepIndicator2').classList.add('active');
+            } else if (role === 'teacher') {
+                document.getElementById('stepTeacher').classList.add('active');
+                document.getElementById('stepIndicator2').classList.add('active');
+            } else if (role === 'agent') {
+                alert("Agent accounts are created by Admin only. Please contact support at yawentafrance@hotmail.com");
+                // Go back to step 1
+                document.getElementById('step1').classList.add('active');
+                document.getElementById('stepIndicator1').classList.add('active');
+            }
+        }
+
+        // --- Toggle Student Fields ---
+        function toggleStudentFields() {
+            const grade = document.getElementById('studentGrade').value;
+            const school = document.getElementById('schoolType').value;
+            
+            // Show/Hide High School Fields
+            const highSchoolFields = document.getElementById('highSchoolFields');
+            if (grade === '9-12') {
+                highSchoolFields.style.display = 'block';
+            } else {
+                highSchoolFields.style.display = 'none';
+            }
+
+            // Show/Hide Local Code
+            const localCode = document.getElementById('localCodeField');
+            if (school === 'local') {
+                localCode.style.display = 'block';
+            } else {
+                localCode.style.display = 'none';
+            }
+        }
+
+        // --- Navigation ---
+        function goToTerms() {
+            document.querySelectorAll('.form-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('stepTerms').classList.add('active');
+            document.getElementById('stepIndicator3').classList.add('active');
+            document.getElementById('stepIndicator2').classList.add('completed');
+        }
+
+        function goBack(stepId) {
+            document.querySelectorAll('.form-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(stepId).classList.add('active');
+            document.getElementById('stepIndicator1').classList.add('active');
+            document.getElementById('stepIndicator2').classList.remove('completed');
+        }
+
+        // --- Form Submission ---
+        function submitForm() {
+            if (!document.getElementById('agreeTerms').checked) {
+                alert("You must agree to the Terms and Conditions to continue.");
+                return;
+            }
+            
+            // Show success message
+            const btn = document.querySelector('#stepTerms .btn-primary');
+            const originalText = btn.innerText;
+            btn.innerText = '✓ Registering...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                alert("Registration Submitted Successfully!\n\nYour account is now under inspection by an agent. You will be contacted within 48 hours for verification.\n\nThank you for joining Yawenta!");
+                window.location.href = 'login.html';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

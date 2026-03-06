@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Yawenta Foundation</title>
+    <style>
+        :root {
+            --primary-blue: #1565c0;
+            --light-blue: #e3f2fd;
+            --accent-color: #ff9800;
+            --gold: #ffd700;
+            --green-highlight: #4caf50;
+            --red-error: #f44336;
+            --text-dark: #333333;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body { 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Backgrounds (Video/Lite based on preference) --- */
+        .video-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            z-index: -2; 
+            pointer-events: none;
+            display: none;
+        }
+        .static-bg { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(135deg, var(--light-blue) 0%, #bbdefb 100%); 
+            z-index: -2;            display: block;
+        }
+        .static-bg.video-mode {
+            display: none;
+        }
+        .overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(255, 255, 255, 0.3); 
+            backdrop-filter: blur(3px);
+            z-index: -1; 
+        }
+
+        /* --- Header with Logo --- */
+        .page-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .page-header .logo {
+            color: var(--primary-blue);
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .page-header .logo::before {
+            content: "🌟";
+            font-size: 2rem;
+        }
+        .page-header .logo:hover {
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* --- Ethiopian Timer Widget (Top Right) --- */        .timer-container {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-highlight));
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(21, 101, 192, 0.4), 0 0 30px rgba(255, 215, 0, 0.3);
+            z-index: 99;
+            min-width: 280px;
+            animation: slideInRight 0.5s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .timer-label {
+            font-size: 0.8rem;
+            opacity: 0.95;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .timer-display {
+            font-size: 1.8rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+        .timer-date {
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            opacity: 0.95;
+        }
+        .timer-toggle {
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        .timer-toggle input {
+            margin-right: 0.4rem;
+        }
+
+        /* --- Login Container --- */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;            margin-top: 2rem;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2), 0 0 40px rgba(255, 215, 0, 0.2);
+            width: 100%;
+            max-width: 480px;
+            animation: fadeIn 0.6s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--gold), var(--green-highlight));
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header h1 {
+            color: var(--primary-blue);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(21, 101, 192, 0.2);
+        }
+        .login-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .input-group { 
+            margin-bottom: 1.5rem; 
+            text-align: left; 
+        }
+        .input-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            color: var(--text-dark);             font-size: 0.9rem; 
+            font-weight: 600;
+        }
+
+        /* --- Warning Message Above Input --- */
+        .input-warning {
+            color: var(--red-error);
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            animation: shake 0.3s ease;
+        }
+        .input-warning.show {
+            display: flex;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(21, 101, 192, 0.15), 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        
+        /* Red Error Glow */
+        .input-wrapper input.error-glow {
+            border-color: var(--red-error);
+            box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2), 0 0 30px rgba(244, 67, 54, 0.6);
+            animation: shake 0.5s ease;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        .input-wrapper input:focus + .input-icon {
+            color: var(--primary-blue);
+            text-shadow: 0 0 10px rgba(21, 101, 192, 0.5);
+        }
+        
+        .options { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 0.9rem; 
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .remember-me input {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        .forgot-password {
+            color: var(--primary-blue); 
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .forgot-password:hover {
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            position: relative;            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn:hover::before {
+            left: 100%;
+        }
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary-blue), #1976d2); 
+            color: white;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.5), 0 0 30px rgba(255, 215, 0, 0.5);
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-google { 
+            background: white;
+            color: #333;
+            border: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn-google:hover {
+            background: #f5f5f5;
+            border-color: var(--gold);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
+        }
+        .google-icon {
+            font-size: 1.3rem;
+        }
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .divider span {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 0 1rem;
+            color: #999;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .links { 
+            text-align: center;
+            font-size: 0.95rem; 
+            margin-top: 1.5rem;
+            color: #666;
+        }
+        .links a { 
+            color: var(--primary-blue); 
+            text-decoration: none; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .links a:hover {
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .back-home a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;            transition: all 0.3s ease;
+        }
+        .back-home a:hover {
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+            transform: translateX(-3px);
+        }
+
+        /* Attempt Counter */
+        .attempt-counter {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--red-error);
+            margin-bottom: 1rem;
+            font-weight: bold;
+            display: none;
+        }
+        .attempt-counter.show {
+            display: block;
+            animation: pulse 1s infinite;
+        }
+
+        /* --- Animations --- */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .timer-container {
+                position: relative;                top: 0;
+                right: 0;
+                margin: 1rem;
+                min-width: auto;
+                max-width: calc(100% - 2rem);
+            }
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+            .login-header h1 {
+                font-size: 1.7rem;
+            }
+            .options {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Backgrounds -->
+    <div class="static-bg" id="static-bg"></div>
+    <video class="video-bg" id="main-video" autoplay muted loop playsinline>
+        <source src="" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <a href="index.html" class="logo">Yawenta Foundation</a>
+    </header>
+
+    <!-- Ethiopian Timer Widget (Top Right) -->
+    <div class="timer-container" id="timerContainer">
+        <div class="timer-label">
+            <span>🇪</span>
+            <span>Ethiopian Time</span>
+        </div>
+        <div class="timer-display" id="ethiopianClock">00:00:00</div>
+        <div class="timer-date" id="ethiopianDate">Loading...</div>
+        <div class="timer-toggle">
+            <label>
+                <input type="checkbox" id="showTimer" checked onchange="toggleTimer()">
+                Show timer
+            </label>        </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Welcome Back!</h1>
+                <p>Login to access your Yawenta account</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email or Username</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="email" required placeholder="Enter your email or username" autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <!-- Warning Message Above Password -->
+                    <div class="input-warning" id="passwordWarning">
+                        <span>⚠️</span>
+                        <span>Invalid characters detected! Please use letters, numbers, and basic symbols only.</span>
+                    </div>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" required placeholder="Enter your password" autocomplete="current-password">
+                    </div>
+                </div>
+
+                <!-- Attempt Counter -->
+                <div class="attempt-counter" id="attemptCounter">
+                    ⚠️ Attempts Left: <span id="attemptsLeft">5</span>
+                </div>
+
+                <div class="options">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="loginBtn">Login to Account</button>
+                
+                <div class="divider">
+                    <span>OR</span>                </div>
+                
+                <button type="button" class="btn btn-google">
+                    <span class="google-icon">🔍</span>
+                    Continue with Google
+                </button>
+            </form>
+
+            <div class="links">
+                <p>Don't have an account? <a href="signup.html">Sign Up Now</a></p>
+            </div>
+
+            <div class="back-home">
+                <a href="index.html">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Background Preference (Same as loading page) ---
+        window.addEventListener('load', () => {
+            const mode = localStorage.getItem('yawenta_experience_mode');
+            const video = document.getElementById('main-video');
+            const staticBg = document.getElementById('static-bg');
+
+            if (mode === 'video') {
+                video.style.display = 'block';
+                staticBg.classList.add('video-mode');
+                video.src = "assets/yawenta-intro.mp4";
+                video.load();
+                video.play().catch(e => {
+                    console.log("Autoplay prevented");
+                    video.style.display = 'none';
+                    staticBg.classList.remove('video-mode');
+                });
+            } else {
+                video.style.display = 'none';
+                video.src = "";
+                staticBg.classList.remove('video-mode');
+            }
+            
+            // Load Attempt Counter
+            updateAttemptDisplay();
+        });
+
+        // --- 2. Ethiopian Local Timer Logic ---
+        function updateEthiopianTime() {
+            const now = new Date();
+            const options = { 
+                hour: '2-digit', minute: '2-digit', second: '2-digit',                hour12: false, timeZone: 'Africa/Addis_Ababa'
+            };
+            const dateOptions = {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+                timeZone: 'Africa/Addis_Ababa'
+            };
+            
+            document.getElementById('ethiopianClock').innerText = now.toLocaleTimeString('en-US', options);
+            document.getElementById('ethiopianDate').innerText = now.toLocaleDateString('en-US', dateOptions);
+        }
+        setInterval(updateEthiopianTime, 1000);
+        updateEthiopianTime();
+
+        // --- 3. Toggle Timer Visibility ---
+        function toggleTimer() {
+            const showTimer = document.getElementById('showTimer').checked;
+            const timerContainer = document.getElementById('timerContainer');
+            if (showTimer) {
+                timerContainer.style.display = 'block';
+                localStorage.setItem('showTimerOnLogin', 'true');
+            } else {
+                timerContainer.style.display = 'none';
+                localStorage.setItem('showTimerOnLogin', 'false');
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const showTimerPref = localStorage.getItem('showTimerOnLogin');
+            if (showTimerPref === 'false') {
+                document.getElementById('showTimer').checked = false;
+                document.getElementById('timerContainer').style.display = 'none';
+            }
+        });
+
+        // --- 4. Security: Real-time Input Blocking ---
+        const passwordInput = document.getElementById('password');
+        const emailInput = document.getElementById('email');
+        const passwordWarning = document.getElementById('passwordWarning');
+        
+        // Comprehensive emoji & dangerous char regex
+        const invalidRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2300}-\u{23FF}\u{2B50}\u{2B55}\u{25FB}-\u{25FE}\u{25AA}\u{25AB}\u{2614}\u{2615}\u{2648}-\u{2653}\u{267F}\u{2693}\u{26A1}\u{26AA}\u{26AB}\u{26BD}\u{26BE}\u{26C4}\u{26C5}\u{26CE}\u{26D4}\u{26EA}\u{26F2}\u{26F3}\u{26F5}\u{26FA}\u{26FD}\u{2702}\u{2705}\u{2708}-\u{270D}\u{270F}\u{2712}\u{2714}\u{2716}\u{271D}\u{2721}\u{2728}\u{2733}\u{2734}\u{2744}\u{2747}\u{274C}\u{274E}\u{2753}-\u{2755}\u{2757}\u{2763}\u{2764}\u{2795}-\u{2797}\u{27A1}\u{27B0}\u{27BF}\u{2934}\u{2935}\u{2B05}-\u{2B07}\u{2B1B}\u{2B1C}\u{2B50}\u{2B55}\u{3030}\u{303D}\u{3297}\u{3299}<>"'&;\\\/]/gu;
+
+        function sanitizeInput(input) {
+            const originalValue = input.value;
+            const sanitized = originalValue.replace(invalidRegex, '');
+            
+            if (originalValue !== sanitized) {
+                input.value = sanitized;
+                showWarning(true);
+                input.classList.add('error-glow');
+                setTimeout(() => input.classList.remove('error-glow'), 500);            } else {
+                showWarning(false);
+            }
+        }
+
+        function showWarning(show) {
+            if (show) {
+                passwordWarning.classList.add('show');
+                setTimeout(() => {
+                    passwordWarning.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Real-time listeners
+        passwordInput.addEventListener('input', () => sanitizeInput(passwordInput));
+        emailInput.addEventListener('input', () => sanitizeInput(emailInput));
+        
+        // Block on paste
+        passwordInput.addEventListener('paste', (e) => {
+            setTimeout(() => sanitizeInput(passwordInput), 10);
+        });
+
+        // --- 5. Attempt Counter Logic ---
+        const MAX_ATTEMPTS = 5;
+        let attempts = parseInt(localStorage.getItem('loginAttempts')) || MAX_ATTEMPTS;
+        const attemptCounterDiv = document.getElementById('attemptCounter');
+        const attemptsLeftSpan = document.getElementById('attemptsLeft');
+        const loginBtn = document.getElementById('loginBtn');
+
+        function updateAttemptDisplay() {
+            attemptsLeftSpan.innerText = attempts;
+            if (attempts < MAX_ATTEMPTS) {
+                attemptCounterDiv.classList.add('show');
+            } else {
+                attemptCounterDiv.classList.remove('show');
+            }
+            
+            if (attempts <= 0) {
+                loginBtn.disabled = true;
+                loginBtn.innerText = "Too Many Attempts - Try Later";
+                loginBtn.style.background = "#ccc";
+            }
+        }
+
+        function decrementAttempts() {
+            attempts--;
+            localStorage.setItem('loginAttempts', attempts);
+            updateAttemptDisplay();
+        }
+        function resetAttempts() {
+            attempts = MAX_ATTEMPTS;
+            localStorage.setItem('loginAttempts', attempts);
+            updateAttemptDisplay();
+        }
+
+        // --- 6. Form Submission with Validation ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Final validation check
+            const passwordValue = passwordInput.value;
+            const emailValue = emailInput.value;
+            
+            if (invalidRegex.test(passwordValue) || invalidRegex.test(emailValue)) {
+                // Invalid chars detected on submit
+                handleFailedLogin("Invalid characters detected in input.");
+                return;
+            }
+
+            // Simulate successful login (for now)
+            const btn = e.target.querySelector('.btn-primary');
+            const originalText = btn.innerText;
+            btn.innerText = '✓ Login Successful!';
+            btn.style.background = 'linear-gradient(135deg, #4caf50, #66bb6a)';
+            btn.style.boxShadow = '0 0 30px rgba(76, 175, 80, 0.6)';
+            
+            resetAttempts(); // Reset attempts on success
+            
+            setTimeout(() => {
+                alert("Login successful! Redirecting to dashboard...");
+                // window.location.href = 'dashboard.html';
+                btn.innerText = originalText;
+                btn.style.background = '';
+                btn.style.boxShadow = '';
+            }, 1000);
+        });
+
+        function handleFailedLogin(message) {
+            // Clear password
+            passwordInput.value = '';
+            
+            // Red Glow
+            passwordInput.classList.add('error-glow');
+            
+            // Decrement Attempts
+            decrementAttempts();
+            
+            // Show warning            showWarning(true);
+            passwordWarning.innerHTML = `<span>⚠️</span><span>${message} Attempts left: ${attempts}</span>`;
+            passwordWarning.classList.add('show');
+            
+            setTimeout(() => {
+                passwordInput.classList.remove('error-glow');
+                passwordWarning.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
